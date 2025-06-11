@@ -10,7 +10,7 @@ export default function NavBar() {
   }
 
   return (
-    <div className="w-full h-16 shadow-sm flex justify-between items-center px-5 bg-highlight">
+    <div className="w-full h-16 shadow-sm flex justify-between items-center px-5  ">
       <p className="text-xl">pp reader 🌱</p>
       <div className="flex gap-x-5 items-center">
         <ThemeSwitcher />

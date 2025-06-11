@@ -47,7 +47,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (protectedRoutes.includes(request.nextUrl.pathname) && !user) {
-    return NextResponse.redirect("/");
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (
