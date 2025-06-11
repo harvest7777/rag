@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "./auth/AuthContext";
 import "./globals.css";
+import NavBar from "./NavBar";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -35,7 +36,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <NavBar />
+            <div className="px-5">{children}</div>
           </ThemeProvider>
         </AuthProvider>
       </body>

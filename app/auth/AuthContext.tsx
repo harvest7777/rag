@@ -8,10 +8,11 @@ import {
   useState,
 } from "react";
 import { supabase } from "@/lib/supabase/supabase";
-import { User } from "@supabase/supabase-js";
+import { Session, User } from "@supabase/supabase-js";
 
 const AuthContext = createContext<{
   user: User | null;
+  session: Session | null;
   loading: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
@@ -19,6 +20,7 @@ const AuthContext = createContext<{
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   // On mount, check for an existing session
@@ -28,6 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
+      setSession(session);
       setLoading(false);
     };
 
@@ -37,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null);
+        setSession(session);
       }
     );
 
@@ -58,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, session }}>
       {children}
     </AuthContext.Provider>
   );
