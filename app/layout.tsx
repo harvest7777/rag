@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
-import { AuthProvider } from "./auth/AuthContext";
 import "./globals.css";
-import NavBar from "./NavBar";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -29,17 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <NavBar />
-            <div className="px-5">{children}</div>
-          </ThemeProvider>
-        </AuthProvider>
+        <div className="px-5">{children}</div>
       </body>
     </html>
   );

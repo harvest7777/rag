@@ -11,9 +11,10 @@ export default function NavBar() {
 
   return (
     <div className="w-full h-16 shadow-sm flex justify-between items-center px-5  ">
-      <p className="text-xl">pp reader 🌱</p>
+      <p className="text-xl">evil pdf reader 😈</p>
       <div className="flex gap-x-5 items-center">
         <ThemeSwitcher />
+        <p>silly bucks 💵</p>
         {auth.user ? (
           <Button variant={"secondary"} onClick={auth.logout}>
             Sign Out

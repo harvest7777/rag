@@ -130,6 +130,6 @@
     @apply text-xl;
   }
   .click-animation {
-    @apply hover:cursor-pointer active:scale-90 transition-transform;
+    @apply active:scale-90 transition-transform;
   }
 }
