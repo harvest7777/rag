@@ -37,3 +37,7 @@ export const getPresignedUrl = async (
   console.log(data);
   return data;
 };
+
+export const bytesToMb = (size: number): number => {
+  return Number((size / (1024 * 1024)).toFixed(2));
+};

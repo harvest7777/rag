@@ -1,3 +1,4 @@
+"use client";
 import DragAndDrop from "./_components/DragAndDrop";
 
 export default function EvilPage() {

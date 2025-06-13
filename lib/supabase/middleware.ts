@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
 
-const protectedRoutes = ["/evil"];
+const protectedRoutes = ["/evil", "/real"];
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -46,21 +46,29 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (protectedRoutes.includes(request.nextUrl.pathname) && !user) {
+  const isProtected: boolean = protectedRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route)
+  );
+
+  if (user && request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/real/evil", request.url));
+  }
+
+  if (isProtected && !user) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (
-    request.nextUrl.pathname !== "/" &&
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
-  }
+  // if (
+  //   request.nextUrl.pathname !== "/" &&
+  //   !user &&
+  //   !request.nextUrl.pathname.startsWith("/login") &&
+  //   !request.nextUrl.pathname.startsWith("/auth")
+  // ) {
+  //   // no user, potentially respond by redirecting the user to the login page
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = "/auth/login";
+  //   return NextResponse.redirect(url);
+  // }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:

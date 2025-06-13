@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { FiUpload } from "react-icons/fi";
 import { useState, useRef } from "react";
 import { MdOutlineCancel } from "react-icons/md";
-import { getPresignedUrl, uploadFile } from "../_helpers/helpers";
+import { getPresignedUrl, uploadFile, bytesToMb } from "../_helpers/helpers";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/auth/AuthContext";
+import { uploadFileMetadata } from "@/app/(api)/file-services";
+import { v4 as uuidv4 } from "uuid";
 
 type props = {
   className?: string;
@@ -36,14 +38,14 @@ export default function DragAndDrop({ className }: props) {
       errorToast("Only PDF files are supported.");
     }
 
-    if (incomingFiles.some((file) => sizeToMb(file.size) > MAX_FILE_SIZE_MB)) {
+    if (incomingFiles.some((file) => bytesToMb(file.size) > MAX_FILE_SIZE_MB)) {
       errorToast(`Maximum file size is ${MAX_FILE_SIZE_MB} MB.`);
     }
     let newFiles = incomingFiles.filter(
       (file) =>
         !files.some((f) => f.name === file.name) &&
         file.type === "application/pdf" &&
-        sizeToMb(file.size) <= MAX_FILE_SIZE_MB
+        bytesToMb(file.size) <= MAX_FILE_SIZE_MB
     );
 
     if (newFiles.length + files.length > MAX_FILES_AT_ONCE) {
@@ -61,10 +63,6 @@ export default function DragAndDrop({ className }: props) {
     setIsDragging(false);
   };
 
-  const sizeToMb = (size: number): number => {
-    return Number((size / (1024 * 1024)).toFixed(2));
-  };
-
   const handleUpload = async () => {
     setIsUploading(true);
     await Promise.allSettled(
@@ -80,6 +78,8 @@ export default function DragAndDrop({ className }: props) {
             auth.session.access_token
           );
           await uploadFile(file, presignedUrl);
+          const fileUUID = uuidv4();
+          await uploadFileMetadata(auth.session.user.id, fileUUID, file);
         } catch (error) {
           console.error(`Failed to upload ${file.name}:`, error);
         }
@@ -116,9 +116,7 @@ export default function DragAndDrop({ className }: props) {
           <span>drag and drop your files here</span>
           <span>or</span>
         </div>
-        <Button variant={"secondary"} onClick={() => inputRef.current?.click()}>
-          Browse Files
-        </Button>
+        <Button onClick={() => inputRef.current?.click()}>Browse Files</Button>
         <input
           ref={inputRef}
           type="file"
@@ -142,7 +140,7 @@ export default function DragAndDrop({ className }: props) {
             <span className="line-clamp-1">{file.name}</span>
             <div className="flex items-center gap-x-1">
               <span className="text-muted-foreground min-w-fit">
-                {sizeToMb(file.size)} MB
+                {bytesToMb(file.size)} MB
               </span>
               <Button
                 onClick={() => removeFile(file.name)}

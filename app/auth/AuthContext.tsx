@@ -9,6 +9,7 @@ import {
 } from "react";
 import { supabase } from "@/lib/supabase/supabase";
 import { Session, User } from "@supabase/supabase-js";
+import { login, logout } from "./helpers";
 
 const AuthContext = createContext<{
   user: User | null;
@@ -46,20 +47,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => listener.subscription.unsubscribe();
   }, []);
-
-  const login = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      // options: {
-      //   redirectTo: window.location.origin,
-      // },
-    });
-    if (error) console.error(error.message);
-  };
-
-  const logout = async () => {
-    await supabase.auth.signOut();
-  };
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout, session }}>
