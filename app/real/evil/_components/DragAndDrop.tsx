@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { FiUpload } from "react-icons/fi";
 import { useState, useRef } from "react";
 import { MdOutlineCancel } from "react-icons/md";
-import { getPresignedUrl, uploadFile, bytesToMb } from "../_helpers/helpers";
+import { bytesToMb } from "../_helpers/helpers";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/auth/AuthContext";
 import { uploadFileMetadata } from "@/app/(api)/file-services";
 import { v4 as uuidv4 } from "uuid";
+import { uploadUserFile } from "@/app/(api)/file-services";
+import { useFileMetadataStore } from "@/stores/useFileMetadata";
 
 type props = {
   className?: string;
@@ -17,16 +19,19 @@ const errorToast = (message: string) => toast.error(message);
 const successToast = (message: string) => toast.success(message);
 export default function DragAndDrop({ className }: props) {
   const auth = useAuth();
+  const addFile = useFileMetadataStore((state) => state.addFile);
   const MAX_FILE_SIZE_MB = 10;
   const MAX_FILES_AT_ONCE = 5;
-  const [files, setFiles] = useState<File[]>([]);
+  const [clientFiles, setClientFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const removeFile = (fileName: string) => {
     if (isUploading) return;
-    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+    setClientFiles((prevFiles) =>
+      prevFiles.filter((file) => file.name !== fileName)
+    );
   };
 
   const handleFiles = (selectedFiles: FileList | null) => {
@@ -43,18 +48,18 @@ export default function DragAndDrop({ className }: props) {
     }
     let newFiles = incomingFiles.filter(
       (file) =>
-        !files.some((f) => f.name === file.name) &&
+        !clientFiles.some((f) => f.name === file.name) &&
         file.type === "application/pdf" &&
         bytesToMb(file.size) <= MAX_FILE_SIZE_MB
     );
 
-    if (newFiles.length + files.length > MAX_FILES_AT_ONCE) {
-      const filesLeft = MAX_FILES_AT_ONCE - files.length;
+    if (newFiles.length + clientFiles.length > MAX_FILES_AT_ONCE) {
+      const filesLeft = MAX_FILES_AT_ONCE - clientFiles.length;
       errorToast(`You can only upload ${MAX_FILES_AT_ONCE} file at a time.`);
       newFiles = newFiles.slice(0, filesLeft);
     }
 
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    setClientFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -65,29 +70,36 @@ export default function DragAndDrop({ className }: props) {
 
   const handleUpload = async () => {
     setIsUploading(true);
+    let successfulUploadCount = 0;
     await Promise.allSettled(
-      files.map(async (file) => {
+      clientFiles.map(async (file) => {
         try {
           if (!auth || !auth.session) {
             new Error("No auth session found when generating presigned url.");
             return;
           }
-          const presignedUrl = await getPresignedUrl(
-            file.name,
-            file.type,
-            auth.session.access_token
-          );
-          await uploadFile(file, presignedUrl);
           const fileUUID = uuidv4();
-          await uploadFileMetadata(auth.session.user.id, fileUUID, file);
+          await uploadUserFile(auth.session.user.id, fileUUID, file);
+          // This should always come after to ensure the file is actually uplaoded before any metadata is saved
+          const fileMetadata = await uploadFileMetadata(
+            auth.session.user.id,
+            fileUUID,
+            file
+          );
+          console.log("File metadata uploaded:", fileMetadata);
+          addFile(fileMetadata);
+          successfulUploadCount++;
         } catch (error) {
           console.error(`Failed to upload ${file.name}:`, error);
+          errorToast(`${file.name} couldn't be uploaded.`);
         }
       })
     );
+    if (successfulUploadCount > 0) {
+      successToast(`${successfulUploadCount} files uploaded successfully.`);
+    }
     setIsUploading(false);
-    setFiles([]);
-    successToast("Files uploaded successfully!");
+    setClientFiles([]);
   };
 
   return (
@@ -132,14 +144,11 @@ export default function DragAndDrop({ className }: props) {
         />
       </div>
       <div className="p-2 flex flex-col items-center align-middle justify-center gap-y-2">
-        {files.map((file, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between w-full gap-x-1"
-          >
-            <span className="line-clamp-1">{file.name}</span>
-            <div className="flex items-center gap-x-1">
-              <span className="text-muted-foreground min-w-fit">
+        {clientFiles.map((file, index) => (
+          <div key={index} className="flex items-center w-full gap-x-1">
+            <span className="line-clamp-1 flex-1">{file.name}</span>
+            <div className="flex items-center gap-x-1 justify-betwee">
+              <span className="text-muted-foreground ">
                 {bytesToMb(file.size)} MB
               </span>
               <Button
@@ -153,7 +162,7 @@ export default function DragAndDrop({ className }: props) {
             </div>
           </div>
         ))}
-        {files.length > 0 && (
+        {clientFiles.length > 0 && (
           <Button
             variant={"special"}
             loading={isUploading}
