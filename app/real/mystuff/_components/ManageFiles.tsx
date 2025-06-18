@@ -30,10 +30,16 @@ export default function ManageFiles({ className }: Props) {
         </div>
 
         {!files && <Spinner className="mt-8" />}
-        <div className="max-w-full w-full  flex flex-col divide-y-2 divide-muted">
-          {files?.map((file) => (
-            <FileDisplay key={file.file_uuid} fileMetadata={file} />
-          ))}
+        <div className="max-w-full w-full  flex flex-col">
+          {files
+            ?.filter((file) => !file.deleted_at)
+            .map((fileMetadata) => (
+              <FileDisplay
+                key={fileMetadata.file_uuid}
+                className="w-full"
+                fileMetadata={fileMetadata}
+              />
+            ))}
         </div>
       </div>
     </div>

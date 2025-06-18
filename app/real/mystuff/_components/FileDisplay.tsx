@@ -1,14 +1,14 @@
 import { bytesToMb } from "../../evil/_helpers/helpers";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaFilePdf } from "react-icons/fa6";
 import TagDisplay from "./TagDisplay";
+import FileOptions from "./FileOptions";
 
 type Props = {
   className?: string;
   fileMetadata: FileMetadata;
 };
 export default function FileDisplay({ className, fileMetadata }: Props) {
-  const fakeTags = ["school", "freaky tag", "work", "tag3", "fuck"]; // Placeholder for tags
+  const fakeTags = ["school", "aaa tag", "work", "tag3"]; // Placeholder for tags
   return (
     <div className={`${className} p-2 flex items-center align-middle gap-3`}>
       <div className="w-1/3 flex gap-3">
@@ -24,7 +24,7 @@ export default function FileDisplay({ className, fileMetadata }: Props) {
         </div>
       </div>
       <div className="flex-1 text-xl flex flex-row-reverse ">
-        <BsThreeDotsVertical className="text-xl " />
+        <FileOptions fileMetadata={fileMetadata} />
       </div>
     </div>
   );

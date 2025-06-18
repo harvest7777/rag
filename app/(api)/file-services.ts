@@ -57,3 +57,25 @@ export async function uploadUserFile(
 
   return data;
 }
+
+export async function setFileAsDeleted(
+  fileUUID: string
+): Promise<FileMetadata> {
+  /**
+   * Sets file as "deleted" by updating deleted at and returns the updated file metadata.
+   */
+
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("file_metadata")
+    .update({ deleted_at: now })
+    .eq("file_uuid", fileUUID)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Error setting file as deleted:", error);
+    throw new Error("Failed to set file as deleted");
+  }
+  return data;
+}
