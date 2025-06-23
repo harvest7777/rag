@@ -10,6 +10,7 @@ interface FileMetadataActions {
   addFile: (file: FileMetadata) => void;
   updateFile: (updatedFile: FileMetadata) => void;
   setFiles: (files: FileMetadata[]) => void;
+  removeFile: (fileUUID: string) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
 }
 
@@ -30,6 +31,12 @@ export const useFileMetadataStore = create<FileMetadataStore>()(
             : null,
         })),
       setFiles: (files: FileMetadata[]) => set({ files }),
+      removeFile: (fileUUID: string) =>
+        set((state) => ({
+          files: state.files
+            ? state.files.filter((f) => f.file_uuid !== fileUUID)
+            : null,
+        })),
       setHasHydrated: (hasHydrated: boolean) => set({ hasHydrated }),
     }),
     {

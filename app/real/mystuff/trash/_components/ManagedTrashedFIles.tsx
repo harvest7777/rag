@@ -1,13 +1,14 @@
 "use client";
 import Spinner from "@/components/ui/spinner";
-import FileDisplay from "./FileDisplay";
+import TrashedFileDisplay from "./TrashedFileDisplay";
 import { useFileMetadataStore } from "@/stores/useFileMetadata";
 
 type Props = {
   className?: string;
 };
-export default function ManageFiles({ className }: Props) {
+export default function ManageTrashedFiles({ className }: Props) {
   const files = useFileMetadataStore((state) => state.files);
+  console.log("files", files);
 
   return (
     <div className={`${className}`}>
@@ -15,15 +16,15 @@ export default function ManageFiles({ className }: Props) {
         <div className="flex gap-3 p-1 font-bold w-full">
           <h2 className="w-1/3">Name</h2>
           <h2 className="w-1/6">Size</h2>
-          <h2>Tags</h2>
+          <h2>Time Left</h2>
         </div>
 
         {!files && <Spinner className="mt-8" />}
         <div className="max-w-full w-full  flex flex-col">
           {files
-            ?.filter((file) => !file.deleted_at)
+            ?.filter((file) => file.deleted_at)
             .map((fileMetadata) => (
-              <FileDisplay
+              <TrashedFileDisplay
                 key={fileMetadata.file_uuid}
                 className="w-full"
                 fileMetadata={fileMetadata}

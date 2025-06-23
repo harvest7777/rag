@@ -4,6 +4,7 @@ import { useAuth } from "./auth/AuthContext";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useState, useEffect } from "react";
 import { getSillyBucks } from "./(api)/user-services";
+import Link from "next/link";
 
 export default function NavBar() {
   const auth = useAuth();
@@ -24,7 +25,9 @@ export default function NavBar() {
 
   return (
     <div className="w-full h-16 flex justify-between items-center px-5">
-      <p className="text-xl">evil pdf reader 😈</p>
+      <Link href="/real/chat" className="text-xl">
+        evil pdf reader 😈
+      </Link>
       <div className="flex gap-x-5 items-center">
         <ThemeSwitcher />
         <Button
