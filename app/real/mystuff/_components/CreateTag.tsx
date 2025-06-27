@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useAuth } from "@/app/auth/AuthContext";
 import ErrorMessage from "@/components/ui/error-message";
 import { colorsToClass } from "../types";
+import { useTagStore } from "@/stores/useTagStore";
 
 type Props = {
   className?: string;
@@ -25,13 +26,15 @@ export default function CreateTag({ className }: Props) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const addTag = useTagStore((state) => state.addTag);
   const [selectedColor, setSelectedColor] = useState<Colors>("gray");
   const auth = useAuth();
 
   const handleSubmit = async () => {
     if (!auth || !auth.session) throw new Error("User not authenticated");
     try {
-      await createTag(auth.session.user.id, name, selectedColor);
+      const newTag = await createTag(auth.session.user.id, name, selectedColor);
+      addTag(newTag);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

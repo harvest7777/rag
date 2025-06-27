@@ -24,9 +24,9 @@ export default function NavBar() {
   }
 
   return (
-    <div className="w-full h-16 flex justify-between items-center px-5">
-      <Link href="/real/chat" className="text-xl">
-        evil pdf reader 😈
+    <div className="w-full h-16 flex justify-between items-center px-5 ">
+      <Link href="/real/chat" className="text-xl font-semibold">
+        freaky pdf rag 🤤🤤
       </Link>
       <div className="flex gap-x-5 items-center">
         <ThemeSwitcher />

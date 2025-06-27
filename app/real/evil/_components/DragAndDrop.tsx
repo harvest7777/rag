@@ -11,7 +11,7 @@ import {
   uploadFileMetadata,
 } from "@/app/(api)/file-services";
 import { FaCheck } from "react-icons/fa6";
-import { useFileMetadataStore } from "@/stores/useFileMetadata";
+import { useFileMetadataStore } from "@/stores/useFileMetadataStore";
 import { Progress } from "@/components/ui/progress";
 import useFailedUploads from "../_hooks/useFailedUploads";
 import { getFileNameFromTusObjectName } from "../_helpers/helpers";

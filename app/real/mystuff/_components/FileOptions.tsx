@@ -7,8 +7,9 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useState } from "react";
 import { setFileAsDeleted } from "@/app/(api)/file-services";
-import { useFileMetadataStore } from "@/stores/useFileMetadata";
+import { useFileMetadataStore } from "@/stores/useFileMetadataStore";
 import toast from "react-hot-toast";
+import ManageFileTags from "./ManageFielTags";
 
 type Props = {
   fileMetadata: FileMetadata;
@@ -41,10 +42,11 @@ export default function FileOptions({ fileMetadata }: Props) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit !p-0  overflow-hidden">
-        <div onClick={() => setOpen(false)} className="w-min">
-          <Button variant={"ghost"} className="!rounded-none w-full text-left">
-            Add Tag
-          </Button>
+        <div className="w-min">
+          <ManageFileTags
+            className="!w-full !rounded-none"
+            fileMetadata={fileMetadata}
+          />
           <Button
             onClick={() => handleTrashFile()}
             variant={"ghost"}

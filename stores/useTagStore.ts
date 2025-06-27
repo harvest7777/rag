@@ -9,7 +9,7 @@ interface TagState {
 interface TagActions {
   addTag: (tag: Tag) => void;
   updateTag: (updatedTag: Tag) => void;
-  setTags: (tags: Tag[]) => void;
+  setTags: (tags: Tag[] | null) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
 }
 
@@ -28,7 +28,7 @@ export const useTagStore = create<TagStore>()(
             ? state.tags.map((t) => (t.id === updatedTag.id ? updatedTag : t))
             : null,
         })),
-      setTags: (tags: Tag[]) => set({ tags }),
+      setTags: (tags: Tag[] | null) => set({ tags }),
       setHasHydrated: (hasHydrated: boolean) => set({ hasHydrated }),
     }),
     {

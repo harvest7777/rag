@@ -7,7 +7,7 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useState } from "react";
 import { permanentlyDeleteFile, restoreFile } from "@/app/(api)/file-services";
-import { useFileMetadataStore } from "@/stores/useFileMetadata";
+import { useFileMetadataStore } from "@/stores/useFileMetadataStore";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/auth/AuthContext";
 

@@ -1,8 +1,15 @@
+import { colorsToClass } from "../types";
 type Props = {
-  tag: string;
+  tag: Tag;
 };
 export default function TagDisplay({ tag }: Props) {
   return (
-    <p className=" truncate bg-pink-200 rounded-sm text-pink-600 px-1">{tag}</p>
+    <p
+      className={`truncate rounded-sm px-1 w-fit ${
+        colorsToClass[tag.tag_color].class
+      }`}
+    >
+      {tag.tag_name}
+    </p>
   );
 }

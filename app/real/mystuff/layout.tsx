@@ -1,6 +1,6 @@
 "use client";
 
-import SideBar from "./_components/SideBar";
+import SideBar from "./_components/MyStuffSidebar";
 export default function ClientLayout({
   children,
 }: {

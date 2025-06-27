@@ -142,3 +142,60 @@ export const permanentlyDeleteFile = async (
   // Name is actually path
   return [data[0].id, data[0].name];
 };
+
+export const getTags = async (): Promise<Tag[]> => {
+  const { data, error } = await supabase.from("tags").select("*");
+  if (error) {
+    console.error("Error fetching tags:", error);
+    throw new Error("Failed to fetch tags");
+  }
+  return data;
+};
+
+export const createFileTag = async (
+  fileUUID: string,
+  tagID: number
+): Promise<FileTag> => {
+  const {data, error } = await supabase
+    .from("file_tags")
+    .insert([{ file_uuid: fileUUID, tag_id: tagID }])
+    .select("*")
+    .single();
+  if (error) {
+    console.error("Error adding tag to file:", error);
+    throw new Error("Failed to add tag to file");
+  }
+  return data;
+};
+
+export const deleteFileTag = async (
+  fileUUID: string,
+  tagID: number
+): Promise<FileTag> => {
+  const { data, error } = await supabase
+    .from("file_tags")
+    .delete()
+    .eq("file_uuid", fileUUID)
+    .eq("tag_id", tagID)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Error removing tag from file:", error);
+    throw new Error("Failed to remove tag from file");
+  }
+  return data;
+};
+
+export const getFileTags = async (): Promise<FileTag[]> => {
+  const { data, error } = await supabase
+    .from("file_tags")
+    .select("*");
+
+  if (error) {
+    console.error("Error fetching file tags:", error);
+    throw new Error("Failed to fetch file tags");
+  }
+
+  return data;
+};

@@ -1,7 +1,7 @@
 "use client";
 import Spinner from "@/components/ui/spinner";
 import TrashedFileDisplay from "./TrashedFileDisplay";
-import { useFileMetadataStore } from "@/stores/useFileMetadata";
+import { useFileMetadataStore } from "@/stores/useFileMetadataStore";
 
 type Props = {
   className?: string;
