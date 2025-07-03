@@ -1,26 +1,32 @@
 "use client";
 import { useChatStore } from "@/stores/useChatStore";
 import { useEffect, useRef, useState } from "react";
+import AIThinking from "./AIThinking";
 
 type Props = {
   className?: string;
+  isLoadingAIResponse: boolean;
 };
-export default function ChatMessages({ className }: Props) {
+export default function ChatMessages({
+  className,
+  isLoadingAIResponse,
+}: Props) {
   const chatIDToMessages = useChatStore((state) => state.chatIDToMessages);
   const currentChatID = useChatStore((state) => state.currentChatID);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && !isLoadingAIResponse) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
     if (currentChatID !== null) {
       setMessages(chatIDToMessages[currentChatID]!);
     }
-  }, [messages, chatIDToMessages, currentChatID]);
+  }, [chatIDToMessages, currentChatID, isLoadingAIResponse]);
 
   if (currentChatID === null || messages == null) return null;
+
   return (
     <div
       ref={scrollRef}
@@ -40,6 +46,11 @@ export default function ChatMessages({ className }: Props) {
           >
             {message.message_content}
           </p>
+          <div>
+            {message.message_content === "" &&
+              isLoadingAIResponse &&
+              message.role === "assistant" && <AIThinking />}
+          </div>
         </div>
       ))}
     </div>
