@@ -43,7 +43,7 @@ export default function ChatDisplay({ className, chat }: Props) {
               handleRename();
             }
           }}
-          className="border-none outline-none"
+          className="border-none outline-none bg-transparent w-full truncate box-border"
         />
       ) : (
         <div
@@ -53,11 +53,13 @@ export default function ChatDisplay({ className, chat }: Props) {
           <p className="truncate">{chat.chat_name}</p>
         </div>
       )}
-      <ChatOptions
-        chat={chat}
-        setEditing={setEditing}
-        className="opacity-0 group-hover:opacity-100 transition-opacity"
-      />
+      {!editing && (
+        <ChatOptions
+          chat={chat}
+          setEditing={setEditing}
+          className="opacity-0 group-hover:opacity-100 transition-opacity"
+        />
+      )}
     </div>
   );
 }

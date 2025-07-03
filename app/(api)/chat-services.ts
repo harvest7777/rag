@@ -28,8 +28,9 @@ export const getChats = async (): Promise<Chat[]> => {
   return data;
 };
 
-export const createMessage = async (
+export const insertMessage = async (
   message_content: string,
+  role: "user" | "assistant", 
   chat_id: number
 ): Promise<Message> => {
   // This should only be used to send messages as a user.
@@ -38,7 +39,7 @@ export const createMessage = async (
     .insert({
       message_content: message_content,
       chat_id: chat_id,
-      role: "user",
+      role: role,
     })
     .select("*")
     .single();
@@ -95,20 +96,17 @@ export const renameChat = async (
   return data;
 };
 
-export const createBlankAIMessage = async(chat_id: number): Promise<Message> => {
-  console.log("hiiii")
-  const { data, error } = await supabase
-    .from("messages")
-    .insert({
-      message_content: "",
-      role: "assistant",
-      chat_id: chat_id,
-    })
-    .select("*")
-    .single();
+export const updateMessageContent = async (messageId: number, newContent: string): Promise<Message> => {
+  const {data, error} = await supabase
+  .from("messages")
+  .update({"message_content": newContent})
+  .eq("id", messageId)
+  .select("*")
+  .single();
+
   if (error) {
-    console.error("Error creating blank AI message:", error);
+    console.error("Error updating message content:", error);
     throw error;
   }
   return data;
-};
+}
