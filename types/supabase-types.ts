@@ -10,6 +10,7 @@ declare global {
   type Message = Database["public"]["Tables"]["messages"]["Row"];
   type Chat = Database["public"]["Tables"]["chats"]["Row"];
   type FileTag = Database["public"]["Tables"]["file_tags"]["Row"];
+  type ChatTag = Database["public"]["Tables"]["chat_tags"]["Row"];
 }
 
 // Required to make the file a module and avoid "Cannot redeclare block-scoped variable" error

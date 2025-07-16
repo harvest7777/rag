@@ -29,7 +29,7 @@ export default function ChatDisplay({ className, chat }: Props) {
       key={chat.id}
       className={`group w-full flex justify-between items-center ${
         chat.id === currentChatID ? "bg-muted" : ""
-      } px-4 py-2 rounded-md hover:cursor-pointer hover:bg-muted transition-colors ${className}`}
+      } rounded-md hover:cursor-pointer hover:bg-muted transition-colors ${className}`}
     >
       {editing ? (
         <input
@@ -43,11 +43,11 @@ export default function ChatDisplay({ className, chat }: Props) {
               handleRename();
             }
           }}
-          className="border-none outline-none bg-transparent w-full truncate box-border"
+          className="h-6 border-none outline-none bg-transparent w-full truncate box-border"
         />
       ) : (
         <div
-          className={`group-hover:w-4/5 w-full flex items-center`}
+          className={` px-4 py-2 group-hover:w-4/5 w-full flex items-center`}
           onClick={() => setCurrentChatID(chat.id)}
         >
           <p className="truncate">{chat.chat_name}</p>
@@ -57,7 +57,7 @@ export default function ChatDisplay({ className, chat }: Props) {
         <ChatOptions
           chat={chat}
           setEditing={setEditing}
-          className="opacity-0 group-hover:opacity-100 transition-opacity"
+          className=" w-1/5 opacity-0 group-hover:opacity-100 transition-opacity "
         />
       )}
     </div>

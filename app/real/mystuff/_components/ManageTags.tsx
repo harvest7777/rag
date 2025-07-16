@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -35,6 +36,7 @@ export default function ManageTags({ className }: Props) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Manage Tags</DialogTitle>
+          <DialogDescription>Edit your tags here.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 grid-cols-2">
           {tags?.map((tag) => (
@@ -43,11 +45,6 @@ export default function ManageTags({ className }: Props) {
             </div>
           ))}
         </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="default">Cancel</Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

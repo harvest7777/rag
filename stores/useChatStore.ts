@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 interface ChatState {
   currentChatID: number | null;
   chats: Chat[] | null;
+  chatTags: ChatTag[] | null;
   chatIDToMessages: Record<number, Message[] | null>;
   lastValidated: number | null;
   hasHydrated: boolean;
@@ -13,8 +14,12 @@ interface ChatActions {
   updateChat: (updatedChat: Chat) => void;
   setChats: (chats: Chat[] | null) => void;
   deleteChat: (chatID: number) => void;
+  getCurrentChat: () => Chat | null;
   setHasHydrated: (hasHydrated: boolean) => void;
   setMessagesToChat: (chatID: number, messages: Message[] | null) => void;
+  setChatTags: (chatTags: ChatTag[]|null) => void;
+  addChatTag: (chatTag: ChatTag) => void;
+  removeChatTag: (chatTag: ChatTag) => void;
   addMessageToChat: (chatID: number, message: Message) => void;
   setLastValidated: (timestamp: number | null) => void;
   setCurrentChatID: (chatID: number | null) => void;
@@ -29,6 +34,7 @@ export const useChatStore = create<ChatStore>()(
     (set, get) => ({
       chats: null,
       currentChatID: null,
+      chatTags: null,
       hasHydrated: false,
       chatIDToMessages: {},
       lastValidated: null,
@@ -36,6 +42,13 @@ export const useChatStore = create<ChatStore>()(
         set((state) => ({
           chats: [...(state.chats || []), chat],
         })),
+      setChatTags: (chatTags: ChatTag[] | null) => set({chatTags: chatTags}),
+      addChatTag: (chatTag: ChatTag) => set((state) => ({
+        chatTags: [...(state.chatTags || []), chatTag]
+      })),
+      removeChatTag: (chatTag: ChatTag) => set((state) => ({
+        chatTags: state.chatTags?.filter((ct) => ct.id !== chatTag.id) || null
+      })),
       setChats: (chats: Chat[] | null) => set({ chats }),
       updateChat: (updatedChat: Chat) =>
         set((state) => ({
@@ -45,6 +58,7 @@ export const useChatStore = create<ChatStore>()(
               )
             : null,
         })),
+      getCurrentChat: () => get().chats?.find((c) => c.id === get().currentChatID) || null,
       deleteChat: (chatID: number) => {
         /* When we delete a chat we must remove its messages, update current chat if
         deleted chat was the one we are on*/
@@ -106,6 +120,7 @@ export const useChatStore = create<ChatStore>()(
           // Cache is stale — clear all
           state?.setChats(null);
           state?.setCurrentChatID(null);
+          state?.setChatTags(null);
           state?.setChatIDToMessages({}); // clear messages
           // optionally reset chatIDToMessages or other parts
         }

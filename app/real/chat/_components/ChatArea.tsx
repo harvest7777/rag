@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useState, useRef, useEffect } from "react";
-import { LuSendHorizontal, LuTag } from "react-icons/lu";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { LuSendHorizontal } from "react-icons/lu";
 import { useChatStore } from "@/stores/useChatStore";
 import {
   insertMessage,
@@ -10,6 +10,10 @@ import {
 } from "@/app/(api)/chat-services";
 import { useAuth } from "@/app/auth/AuthContext";
 import ChatMessages from "./ChatMessages";
+import ManageChatSources from "./ManageChatSources";
+import TagDisplay from "../../mystuff/_components/TagDisplay";
+import { useTagStore } from "@/stores/useTagStore";
+import { useUserSettingsStore } from "@/stores/useUserSettingsStore";
 
 type Props = {
   className?: string;
@@ -19,12 +23,23 @@ export default function ChatArea({ className }: Props) {
   const [input, setInput] = useState("");
   const [isLoadingAIResponse, setIsLoadingAIResponse] =
     useState<boolean>(false);
+
+  const showSources = useUserSettingsStore((state) => state.showSources);
+  const setShowSources = useUserSettingsStore((state) => state.setShowSources);
   const auth = useAuth();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const addChat = useChatStore((state) => state.addChat);
   const currentChatID = useChatStore((state) => state.currentChatID);
   const setCurrentChatID = useChatStore((state) => state.setCurrentChatID);
   const addMessageToChat = useChatStore((state) => state.addMessageToChat);
+  const chatTags = useChatStore((state) => state.chatTags);
+  const tags = useTagStore((state) => state.tags);
+
+  const currentChatTags = useMemo(
+    () => chatTags?.filter((chatTag) => chatTag.chat_id === currentChatID),
+    [chatTags, currentChatID]
+  );
+
   const updateLastMessageContent = useChatStore(
     (state) => state.updateLastMessageContent
   );
@@ -92,6 +107,7 @@ export default function ChatArea({ className }: Props) {
         fullResponse
       );
     }
+    console.log("fullResponse", fullResponse);
     setIsLoadingAIResponse(true);
     await updateMessageContent(newMessage.id, fullResponse);
   };
@@ -135,7 +151,7 @@ export default function ChatArea({ className }: Props) {
         </div>
         {/* chat controls and input wrapper */}
         <div className="bg-background w-full rounded-t-4xl absolute bottom-0">
-          <div className="w-full rounded-4xl border shadow-sm p-2 box-border">
+          <div className="w-full rounded-md border shadow-sm p-2 box-border">
             <textarea
               value={input}
               ref={inputRef}
@@ -152,10 +168,15 @@ export default function ChatArea({ className }: Props) {
             />
             {/* chat controls */}
             <div className="flex justify-between">
-              <Button variant={"ghost"} size={"icon"} className="!rounded-full">
-                <LuTag className="size-5" />
-              </Button>
-
+              <div className="flex">
+                <ManageChatSources />
+                <Button
+                  onClick={() => setShowSources(!showSources)}
+                  variant={"link"}
+                >
+                  {showSources ? "Hide Sources" : "View Sources"}
+                </Button>
+              </div>
               <Button
                 size={"icon"}
                 variant={"ghost"}
@@ -164,6 +185,19 @@ export default function ChatArea({ className }: Props) {
                 <LuSendHorizontal className="size-5" />
               </Button>
             </div>
+            {showSources && currentChatTags && currentChatTags.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-2">
+                {currentChatTags?.map((chatTag) => {
+                  const tag = tags?.find((tag) => tag.id === chatTag.tag_id);
+                  if (!tag) return null;
+                  return (
+                    <div key={chatTag.id}>
+                      <TagDisplay tag={tag} />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>

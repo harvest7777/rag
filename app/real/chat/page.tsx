@@ -4,7 +4,11 @@ import ChatArea from "./_components/ChatArea";
 import ChatSideBar from "./_components/ChatSideBar";
 import { useChatStore } from "@/stores/useChatStore";
 import { useEffect } from "react";
-import { getChats, getMessagesForChat } from "@/app/(api)/chat-services";
+import {
+  fetchChatTags,
+  getChats,
+  getMessagesForChat,
+} from "@/app/(api)/chat-services";
 
 export default function ChatPage() {
   const auth = useAuth();
@@ -19,6 +23,7 @@ export default function ChatPage() {
   const setChatIDToMessages = useChatStore(
     (state) => state.setChatIDToMessages
   );
+  const setChatTags = useChatStore((state) => state.setChatTags);
 
   useEffect(() => {
     const init = async () => {
@@ -30,6 +35,8 @@ export default function ChatPage() {
         Object.fromEntries(newChatIds.map((id) => [id, null]));
       setChats(fetchedChats);
       setChatIDToMessages(chatIDToEmptyMessages);
+      const fetchedChatTags = await fetchChatTags();
+      setChatTags(fetchedChatTags);
       setLastValidated(now);
     };
     if (hasHydrated && chats == null) {

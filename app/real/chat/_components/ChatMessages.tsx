@@ -2,6 +2,7 @@
 import { useChatStore } from "@/stores/useChatStore";
 import { useEffect, useRef, useState } from "react";
 import AIThinking from "./AIThinking";
+import ReactMarkdown from "react-markdown";
 
 import { IoInformationCircleOutline } from "react-icons/io5";
 
@@ -48,7 +49,9 @@ export default function ChatMessages({
           `}
           >
             {/* case 1: the message has content and we just display it  */}
-            {message.message_content !== "" && <p>{message.message_content}</p>}
+            {message.message_content !== "" && (
+              <ReactMarkdown>{message.message_content}</ReactMarkdown>
+            )}
 
             {/* case 2: the assistant is loading its message */}
             <div>

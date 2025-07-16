@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -52,7 +53,12 @@ export default function ManageFileTags({ className, fileMetadata }: Props) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{fileMetadata.file_name} Tags</DialogTitle>
+          <DialogTitle className="line-clamp-1 pr-2">
+            {fileMetadata.file_name} Tags
+          </DialogTitle>
+          <DialogDescription>
+            Add or remove tags from your file.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 grid-cols-2">
           {tags?.map((tag) => (
@@ -69,11 +75,6 @@ export default function ManageFileTags({ className, fileMetadata }: Props) {
             </div>
           ))}
         </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="default">Cancel</Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

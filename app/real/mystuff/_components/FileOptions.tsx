@@ -9,7 +9,7 @@ import { useState } from "react";
 import { setFileAsDeleted } from "@/app/(api)/file-services";
 import { useFileMetadataStore } from "@/stores/useFileMetadataStore";
 import toast from "react-hot-toast";
-import ManageFileTags from "./ManageFielTags";
+import ManageFileTags from "./ManageFileTags";
 
 type Props = {
   fileMetadata: FileMetadata;

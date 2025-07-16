@@ -110,3 +110,45 @@ export const updateMessageContent = async (messageId: number, newContent: string
   }
   return data;
 }
+
+export const fetchChatTags = async(): Promise<ChatTag[]> => {
+  const {data, error} = await supabase
+  .from("chat_tags")
+  .select("*");
+  if (error) {
+    console.error("Error fetching chat tags:", error);
+    throw error;
+  }
+  return data;
+}
+
+export const insertChatTag = async (chat_id: number, tag_id: number): Promise<ChatTag> => {
+  const {data, error} = await supabase
+  .from("chat_tags")
+  .insert({
+    chat_id: chat_id,
+    tag_id: tag_id,
+  })
+  .select("*")
+  .single();
+  if (error) {
+    console.error("Error inserting chat tag:", error);
+    throw error;
+  }
+  return data;
+}
+
+export const deleteChatTag = async (chat_id: number, tag_id: number): Promise<ChatTag> => {
+  const {data, error} = await supabase
+  .from("chat_tags")
+  .delete()
+  .eq("chat_id", chat_id)
+  .eq("tag_id", tag_id)
+  .select("*")
+  .single();
+  if (error) {
+    console.error("Error deleting chat tag:", error);
+    throw error;
+  }
+  return data;
+}
