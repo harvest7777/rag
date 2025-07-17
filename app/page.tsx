@@ -1,12 +1,10 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
-import { login } from "./auth/helpers";
+import SelectBillContainer from "./(landing)/_components/SelectBill";
 
 export default function Home() {
   return (
-    <div>
-      <Button onClick={login}>Log In</Button>
-    </div>
+    <main>
+        <SelectBillContainer />
+    </main>
   );
 }

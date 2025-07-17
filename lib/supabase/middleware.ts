@@ -50,9 +50,9 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route)
   );
 
-  if (user && request.nextUrl.pathname === "/") {
-    return NextResponse.redirect(new URL("/real/evil", request.url));
-  }
+  // if (user && request.nextUrl.pathname === "/") {
+  //   return NextResponse.redirect(new URL("/real/evil", request.url));
+  // }
 
   if (isProtected && !user) {
     return NextResponse.redirect(new URL("/", request.url));
